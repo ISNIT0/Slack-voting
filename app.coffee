@@ -9,7 +9,7 @@ active=null
 
 app.post '/vote', (req,res)->
   if active
-    db.collection('votes').update {user_id:req.body.user_id},{$set:{user_id:req.body.user_id,poll:active}},{upsert:true}
+    db.collection('votes').update {user_id:req.body.user_id},{$set:{user_id:req.body.user_id,poll:active,vote:req.body.text,date:new Date()}},{upsert:true}
     slackbot.send '#'+req.body.channel_name,req.body.user_name+' just voted!\nYou can vote using\n> /vote [poll name] [vote]'
     res.send 'Your vote has been counted/updated.'
   else

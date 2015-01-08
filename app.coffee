@@ -10,7 +10,7 @@ active=null
 app.post '/vote', (req,res)->
   if active
     db.collection('votes').update {user_id:req.body.user_id},{$set:{user_id:req.body.user_id,poll:active,vote:req.body.text,date:new Date()}},{upsert:true}
-    slackbot.send '#'+req.body.channel_name,req.body.user_name+' just voted!\nYou can vote using\n> /vote [poll name] [vote]'
+    slackbot.send '#'+req.body.channel_name,req.body.user_name+' just voted!\nYou can vote using\n> /vote [vote]'
     res.send 'Your vote has been counted/updated.'
   else
     res.send 'There are no open polls.'
@@ -18,9 +18,15 @@ app.post '/vote', (req,res)->
 app.post '/poll', (req, res)->
   if active
     db.collection('votes').find {poll:active}, (e,docs)->
-      res.send 'Votes:\n'+((_.uniq(docs.map((val)->val.vote)).map (val)->docs.filter((filt)->filt.vote==val).map (val,index,arr)->[val.vote,arr.length].join ': ').map (val)->val[0]).join '\n'
-  else
-    res.send 'There are no open polls.'
+      db.collection('polls').findOne {_id:active}, (e,poll)->
+        res.send
+          [
+            'Poll Name: '+poll.name,
+            'Poll Description: '+poll.desc||'N/A',
+            'Votes:',((_.uniq(docs.map((val)->val.vote)).map (val)->docs.filter((filt)->filt.vote==val).map (val,index,arr)->[val.vote,arr.length].join ': ').map (val)->val[0]).join '\n'
+          ].join '\n'
+    else
+      res.send 'There are no open polls.'
 
 app.post '/openPoll', (req, res)->
   db.collection('polls').insert {name:req.body.text,user_id:req.body.user_id,date:new Date()},(e,doc)->

@@ -4,10 +4,16 @@ app.use require('body-parser').urlencoded {extended: true}
 db = require('mongojs')('frontDevVotes')
 _ = require 'underscore'
 
+
+Slackbot = require('slackbot')
+slackbot = new Slackbot('atslash','UhJsutJ8NKUOQ0onndiaUPhw')
+
+
 app.post '/', (req,res)->
 	db.collection(req.body.text.split(' ')[0]).find {}, (e,docs)->
 		if !e&&docs.length
 			db.collection(req.body.text.split(' ')[0]).update {user_id:req.body.user_id},{$set:{user_id:req.body.user_id,vote:req.body.text.split(' ')[1]}},{upsert:true}
+			slackbot.send '#'+req.body.channel_name,req.body.user_name+' just voted!\nYou can vote using\n> /vote [poll name] [vote]'
 			res.send 'Your vote has been counted/updated.'
 		else
 			res.send 'Your vote was not counted, please ensure you are voting on an existing topic.'

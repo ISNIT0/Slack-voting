@@ -4,7 +4,7 @@ app.use require('body-parser').urlencoded {extended: true}
 db = require('mongojs')('frontDev')
 _ = require 'underscore'
 Slackbot = require('slackbot')
-slackbot = new Slackbot('atslash','UhJsutJ8NKUOQ0onndiaUPhw')
+slackbot = new Slackbot('frontendDevelopers','ohdXyenyZmWvrQMPBIbcV1BG') #Shhhh, don't tell anyone our key is on GitHub
 active=null
 
 app.post '/vote', (req,res)->

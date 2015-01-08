@@ -13,7 +13,7 @@ app.post '/', (req,res)->
 
 app.post '/newPoll', (req,res)->
 	db.collection(req.body.text.split(' ')[0]).insert {init:true,user_id:req.body.user_id}
-	res.send ['New Poll',req.body.text.split(' ')[0],'has been created.'].join ' '
+	res.send ['New poll',req.body.text.split(' ')[0],'has been created.'].join ' '
 
 
 app.listen 3766

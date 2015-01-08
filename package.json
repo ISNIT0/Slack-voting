@@ -1,0 +1,12 @@
+{
+"name": "slackVoter",
+"version": "0.0.1",
+"description": "A voting extension for Slack developed for FrontendDevelopers.org",
+"repository": "https://github.com/ISNIT0/piListener.git",
+"author": "Joe Reeve",
+"dependencies": {
+  "body-parser":">=1.9.2",
+  "express":">=4.10.1",
+  "mongojs":">=0.17.0"
+}
+}

@@ -43,7 +43,7 @@ app.post '/pollEnd', (req, res)->
     db.collection('polls').findOne {_id:active},(e,doc)->
       if req.body.user_id == doc.user_id
         setTimeout (->active=null),parseInt(req.body.text)*1000*60
-        res.send 'The poll will close in '+parseInt(req.body.text)*1000*60+' minutes!'
+        res.send 'The poll will close in '+parseInt(req.body.text)+' minutes!'
       else
         res.send 'You do not have permsision to close this poll.'
   else

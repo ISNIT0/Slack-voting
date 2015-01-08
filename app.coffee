@@ -30,7 +30,7 @@ app.post '/openPoll', (req, res)->
 app.post '/closePoll', (req, res)->
   if active
     db.collection('polls').findOne {_id:active},(e,doc)->
-      if req.data.user_id == doc.user_id
+      if req.body.user_id == doc.user_id
         active = null
         res.send 'The poll has been closed.'
       else
@@ -41,9 +41,9 @@ app.post '/closePoll', (req, res)->
 app.post '/pollEnd', (req, res)->
   if active
     db.collection('polls').findOne {_id:active},(e,doc)->
-      if req.data.user_id == doc.user_id
-        setTimeout (->active=null),parseInt(data.text)*1000*60
-        res.send 'The poll will close in '+parseInt(data.text)*1000*60+' minutes!'
+      if req.body.user_id == doc.user_id
+        setTimeout (->active=null),parseInt(req.body.text)*1000*60
+        res.send 'The poll will close in '+parseInt(req.body.text)*1000*60+' minutes!'
       else
         res.send 'You do not have permsision to close this poll.'
   else

@@ -19,8 +19,7 @@ app.post '/poll', (req, res)->
   if active
     db.collection('votes').find {poll:active}, (e,docs)->
       db.collection('polls').findOne {_id:active}, (e,poll)->
-        res.send
-          [
+        res.send [
             'Poll Name: '+poll.name,
             'Poll Description: '+poll.desc||'N/A',
             'Votes:',((_.uniq(docs.map((val)->val.vote)).map (val)->docs.filter((filt)->filt.vote==val).map (val,index,arr)->[val.vote,arr.length].join ': ').map (val)->val[0]).join '\n'

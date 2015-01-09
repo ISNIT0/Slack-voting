@@ -55,12 +55,14 @@ app.post '/openPoll', (req, res)->
   db.collection('polls').insert {name:req.body.text,user_id:req.body.user_id,date:new Date()},(e,doc)->
     if !e
       active = doc._id
-      request.post 'http://frontenddevelopers.org:3766/announce', body:req.body, text:[
-         (req.body.user_name+' just opened poll '+req.body.text),
-         'Use `/poll` to view more information.',
-         'Use `/vote [yes no maybe]` to vote.'
-       ].join '\n'
-
+      request.post 'http://frontenddevelopers.org:3766/announce', {
+        body:req.body,
+        text:[
+          (req.body.user_name+' just opened poll '+req.body.text),
+          'Use `/poll` to view more information.',
+          'Use `/vote [yes no maybe]` to vote.'
+        ].join '\n'
+      }
       res.send ['New poll',req.body.text,'has been created.'].join ' '
 
 app.post '/closePoll', (req, res)->

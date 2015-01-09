@@ -6,7 +6,7 @@ db = require('mongojs')('frontDev')
 _ = require 'underscore'
 request = require 'request'
 Slackbot = require('slackbot')
-slackbot = new Slackbot('frontendDevelopers','ohdXyenyZmWvrQMPBIbcV1BG') #Shhhh, don't tell anyone our key is on GitHub
+slackbot = new Slackbot('frontendDevelopers','iyQlHBBGvOh49to0aydHT5lY') #Shhhh, don't tell anyone our key is on GitHub
 active = null
 users = 0
 newUsersMessage = "Welcome! This channel is for admin announcements. Feel free to introduce yourself in #_intro and then speak openly in #_generaldiscussion.\n\nYou can join rooms under *Channels* on the left bar. We encourage you to share your work and participate in conversations. If you're an up-and-coming developer feel free to join #mentors. Ask within #regions if you're looking for a specific location's private group. General knowledge and ideas generally flow out of #knowledge.\n\nNotifications can be controlled through the down arrow next to the title. Also, Slack has a pretty amazing desktop application, if you're not already using it.\n\nIf you'd like to update the website or logo feel free to fork and and make a pull request. This is a community driven project so you're welcome to change or add anything to our site and community. You can find them at https://github.com/frontenddevelopers\n\nGlad you're here. "
@@ -19,7 +19,7 @@ request 'https://slack.com/api/rtm.start?token=xoxp-3331214327-3349545555-336509
       request 'https://slack.com/api/users.list?token=xoxp-3331214327-3349545555-3365091811-9c50c8',(e, res, body)->
         !users&&users=JSON.parse(body).members.length
         if JSON.parse(body).members.length-users>=5
-          users = JSON.parse(body).members.length
+          users = 0
           slackbot.send '#_announcements', newUsersMessage
           slackbot.send '#_intro', introMessage
 

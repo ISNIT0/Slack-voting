@@ -27,7 +27,6 @@ app.post '/region', (req, res)->
          else res.send 'You have been invited.'
 
 app.post '/announce', (req, res)->
-  console.log req.body
   request 'https://slack.com/api/channels.list?token=xoxp-3331214327-3349545555-3365091811-9c50c8&exclude_archived=1', (e,response,body)->
      JSON.parse(body).channels.forEach (val)->slackbot.send '#'+val.name, req.body.text
 
@@ -56,7 +55,6 @@ app.post '/openPoll', (req, res)->
     if !e
       active = doc._id
       request.post 'http://frontenddevelopers.org:3766/announce', {
-        body:req.body,
         text:[
           (req.body.user_name+' just opened poll '+req.body.text),
           'Use `/poll` to view more information.',

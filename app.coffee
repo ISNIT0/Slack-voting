@@ -17,14 +17,14 @@ app.post '/region', (req, res)->
     request 'https://slack.com/api/groups.create?token=xoxp-3331214327-3349545555-3365091811-9c50c8&name=reg_'+req.body.text.split(' ')[1], (e, response, body)->
       if JSON.parse(body).error then res.send JSON.parse(body).error
       else res.send 'Group created!\nView groups using `/region list`'
-  else 
+  else
      request 'https://slack.com/api/groups.list?token=xoxp-3331214327-3349545555-3365091811-9c50c8&exclude_archived=1', (e,response,body)->
        request 'https://slack.com/api/groups.invite?token=xoxp-3331214327-3349545555-3365091811-9c50c8&user='+
        req.body.user_id+'&channel='+
-       JSON.parse(body).groups.filter((val)->val.name==req.body.text)[0].id,
-       (e,response,body)-> 
+       (JSON.parse(body).groups.filter((val)->val.name==req.body.text)[0]||{}).id,
+       (e,response,body)->
          if JSON.parse(body).error then res.send JSON.parse(body).error
-         else res.send 'You have been invited.'   
+         else res.send 'You have been invited.'
 
 app.post '/announce', (req, res)->
   console.log req.body
@@ -47,20 +47,21 @@ app.post '/poll', (req, res)->
             'Poll Name: '+poll.name,
             'Poll Description: '+poll.desc||'N/A',
             'Votes:',((_.uniq(docs.map((val)->val.vote)).map (val)->docs.filter((filt)->filt.vote==val).map (val,index,arr)->[val.vote,arr.length].join ': ').map (val)->val[0]).join '\n'
-          ].join '\n' 
+          ].join '\n'
   else
     res.send 'There are no open polls.'
 
 app.post '/openPoll', (req, res)->
   db.collection('polls').insert {name:req.body.text,user_id:req.body.user_id,date:new Date()},(e,doc)->
-    active = doc._id
-    request.post '/announce', body:req.body, text:[
-       (req.body.user_name+' just opened poll '+req.body.text),
-       'Use `/poll` to view more information.',
-       'Use `/vote [yes no maybe]` to vote.'
-     ].join '\n'
+    if !e
+      active = doc._id
+      request.post '/announce', body:req.body, text:[
+         (req.body.user_name+' just opened poll '+req.body.text),
+         'Use `/poll` to view more information.',
+         'Use `/vote [yes no maybe]` to vote.'
+       ].join '\n'
 
-    res.send ['New poll',req.body.text,'has been created.'].join ' '
+      res.send ['New poll',req.body.text,'has been created.'].join ' '
 
 app.post '/closePoll', (req, res)->
   if active

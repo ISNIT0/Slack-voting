@@ -28,7 +28,6 @@ To create a region:
 ``
 /region create [loc]
 ``
-
 ``
 /region create uk
 ``

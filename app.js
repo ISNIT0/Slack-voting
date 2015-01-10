@@ -84,6 +84,7 @@
   });
 
   app.post('/announce', function(req, res) {
+    console.log(req.body.text);
     return request('https://slack.com/api/channels.list?token=xoxp-3331214327-3349545555-3365091811-9c50c8&exclude_archived=1', function(e, response, body) {
       return JSON.parse(body).channels.forEach(function(val) {
         return slackbot.send('#' + val.name, req.body.text);

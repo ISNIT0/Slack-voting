@@ -46,6 +46,7 @@ app.post '/region', (req, res)->
          else res.send 'You have been invited.'
 
 app.post '/announce', (req, res)->
+  console.log req.body.text
   request 'https://slack.com/api/channels.list?token=xoxp-3331214327-3349545555-3365091811-9c50c8&exclude_archived=1', (e,response,body)->
      JSON.parse(body).channels.forEach (val)->slackbot.send '#'+val.name, req.body.text
 

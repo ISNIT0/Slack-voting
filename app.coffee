@@ -30,6 +30,7 @@ app.post '/region', (req, res)->
     request 'https://slack.com/api/groups.list?token=xoxp-3331214327-3349545555-3365091811-9c50c8&exclude_archived=1', (e,response,body)->
       res.send 'Use `/region [group name]` to join.\nCurrent region groups:\n' + JSON.parse(body).groups.filter((a)->a.name.split('_')[0]=='reg').map((val)->val.name) .join ', '
   else if req.body.text.split(' ')[0] == 'create' || req.body.text == 'create'
+    console.log req.body.text.split(' ')[1]
     request 'https://slack.com/api/groups.create?token=xoxp-3331214327-3349545555-3365091811-9c50c8&name=reg_'+req.body.text.split(' ')[1], (e, response, body)->
       if JSON.parse(body).error then res.send JSON.parse(body).error
       else

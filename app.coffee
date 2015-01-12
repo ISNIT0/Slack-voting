@@ -5,7 +5,6 @@ app.use require('body-parser').urlencoded {extended: true}
 db = require('mongojs')('frontDev')
 _ = require 'underscore'
 keys = require './keys.json'
-console.log keys
 request = require 'request'
 Slackbot = require('slackbot')
 slackbot = new Slackbot('frontendDevelopers',keys.slackbot)
@@ -48,9 +47,10 @@ app.post '/region', (req, res)->
          else res.send 'You have been invited.'
 
 app.post '/announce', (req, res)->
-  console.log req.body.text
-  request 'https://slack.com/api/channels.list?token='+keys.slack+'&exclude_archived=1', (e,response,body)->
-     JSON.parse(body).channels.forEach (val)->slackbot.send '#'+val.name, req.body.text
+  request 'https://slack.com/api/users.info?token='+keys.slack+'&user='+JSON.parse(req.body).user_id, (e, res, body)->
+   if JSON.parse(req.body).user.is_admin
+    request 'https://slack.com/api/channels.list?token='+keys.slack+'&exclude_archived=1', (e,response,body)->
+       JSON.parse(body).channels.forEach (val)->slackbot.send '#'+val.name, req.body.text
 
 app.post '/vote', (req,res)->
   if active
@@ -106,5 +106,20 @@ app.post '/pollEnd', (req, res)->
         res.send 'You do not have permsision to close this poll.'
   else
     res.send 'There is no active poll.'
+
+app.get '/active/:key', (req, res)->
+  if req.params.key == keys.admin
+    request 'https://slack.com/api/users.list?token='+keys.slack, (e, response, body)->
+      res.send JSON.parse(body).members
+  else
+    res.send {error:'Not_Authed'}
+
+app.get '/inactive/:key', (req, res)->
+  if req.params.key == keys.admin
+    require('mongojs')('test').collection('emails').find {},(e,docs)->
+      request 'https://slack.com/api/users.list?token='+keys.slack,(e,response,body)->
+        res.send _.chain(_(docs).pluck('email')).difference().value()
+  else
+    res.send {error:'Not_Authed'}
 
 app.listen 3766
